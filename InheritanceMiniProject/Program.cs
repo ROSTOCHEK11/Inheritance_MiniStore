@@ -69,7 +69,7 @@ namespace InheritanceMiniProject
         string ProductName { get; set; }
         int Quantity { get; set; }
 
-        //string PrintItem();
+        
 
     }
 
@@ -105,10 +105,7 @@ namespace InheritanceMiniProject
         public string ProductName { get; set; }
         public int Quantity { get; set; }
 
-        //public string PrintItem()
-        //{
-        //    return $"Product Name: {ProductName}\t|\tQuantity: {Quantity}\t|\t";
-        //}
+        
     }
 
 
