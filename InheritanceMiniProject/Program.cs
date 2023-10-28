@@ -39,7 +39,12 @@ namespace InheritanceMiniProject
 
             foreach (var item in items)
             {
-                if (item is IPurchasable)
+                if ( (item is IRentable) && (item is IPurchasable) )
+                {
+                    purchasables.Add(item as IPurchasable);
+                    rentables.Add(item as IRentable);
+                }
+                else if (item is IPurchasable)
                 {
                     purchasables.Add(item as IPurchasable);
                 }
@@ -52,17 +57,18 @@ namespace InheritanceMiniProject
 
             Write("Hello to my mini Anime Store!\nDo you want to BUY or RENT something ? ( buy / rent ): ");
             string rentalDecision = ReadLine();
+            string continueAnswer;
+            int productChoice;
 
-            if(rentalDecision.ToLower() == "buy")
+            if (rentalDecision.ToLower() == "buy")
             {
 
                 WriteLine("\nHere's some Items to buy :\n\n");
-
                 
-                string continueAnswer;
                 List<IPurchasable> purchases = new List<IPurchasable>();
                 do
                 {
+
                     int counter = 1;
                     foreach (var item in purchasables)
                     {
@@ -74,7 +80,7 @@ namespace InheritanceMiniProject
                     }
 
                     Write("Which one do you want ? ( Write the number ) : ");
-                    int productChoice = int.Parse(ReadLine());
+                    productChoice = int.Parse(ReadLine());
 
                     IPurchasable productChoicePurchase = purchasables[productChoice - 1];
 
@@ -102,9 +108,102 @@ namespace InheritanceMiniProject
                 {
                     WriteLine(item.ProductName);
                 }
-                WriteLine("\nThank's for visiting us !");
+                
+
+
+            }
+            else if (rentalDecision.ToLower() == "rent")
+            {
+
+                WriteLine("\nHere's some Items to rent :\n\n");
+
+                List<IRentable> rents = new List<IRentable>();
+                do
+                {
+
+                    int counter = 1;
+                    foreach (var item in rentables)
+                    {
+                        Write($"{counter})\t");
+                        item.PrintItem();
+                        WriteLine();
+                        counter++;
+
+                    }
+
+                    Write("Which one do you want ? ( Write the number ) : ");
+                    productChoice = int.Parse(ReadLine());
+
+                    IRentable productChoiceRent = rentables[productChoice - 1];
+
+                    if (productChoiceRent.Quantity > 0)
+                    {
+                        productChoiceRent.Rent();
+                        rents.Add(productChoiceRent);
+                    }
+                    else
+                    {
+                        WriteLine("This product is out of stock");
+                    }
+
+
+                    Write("\nDo you want something else ? ( yes / no ) : ");
+                    continueAnswer = ReadLine();
+
+                    Clear();
+
+
+                } while (continueAnswer.ToLower() != "no");
+
+                WriteLine("Products that you rented : \n");
+
+                foreach (var item in rents)
+                {
+                    WriteLine(item.ProductName);
+                }
+
+                Write("\nDo you want to return something ? ( yes / no ) : ");
+                continueAnswer = ReadLine();
+                WriteLine();
+
+                if (continueAnswer.ToLower() == "yes")
+                {
+                    string returnContinue;
+                    do
+                    {
+
+                        int counter = 1;
+                        foreach (var item in rents)
+                        {
+                            Write($"{counter})\t");
+                            WriteLine(item.ProductName);
+                            WriteLine();
+                            counter++;
+                        }
+
+                        Write("\nWhich product do you want to return ( Write the number ) : ");
+                        productChoice = int.Parse(ReadLine());
+
+                        rents[productChoice - 1].ReturnRent();
+
+                        rents.RemoveAt(productChoice - 1);
+
+                        WriteLine("\nDo you want to Return something else ? ( yes / no ) : ");
+                        returnContinue = ReadLine();
+
+                        Clear();
+
+                    } while (returnContinue.ToLower() != "no");
+
+
+                }
+                
+
             }
 
+            
+
+            WriteLine("\nThank's for visiting us !");
 
             ReadLine();
             
