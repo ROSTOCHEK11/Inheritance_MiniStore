@@ -43,11 +43,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\AnimatorModel.cs" />
+    <Compile Include="Models\CostumeModel.cs" />
+    <Compile Include="Models\FigureModel.cs" />
+    <Compile Include="Interfaces\IInventoryModel.cs" />
+    <Compile Include="Models\InventoryModel.cs" />
+    <Compile Include="Interfaces\IPurchasable.cs" />
+    <Compile Include="Interfaces\IRentable.cs" />
+    <Compile Include="Models\MangaModel.cs" />
+    <Compile Include="Models\PosterModel.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

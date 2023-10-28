@@ -58,33 +58,72 @@ namespace InheritanceMiniProject
             Write("Hello to my mini Anime Store!\nDo you want to BUY or RENT something ? ( buy / rent ): ");
             string rentalDecision = ReadLine();
             string continueAnswer;
-            int productChoice;
+            
 
             if (rentalDecision.ToLower() == "buy")
             {
 
                 WriteLine("\nHere's some Items to buy :\n\n");
-                
-                List<IPurchasable> purchases = new List<IPurchasable>();
-                do
+
+                BuyItems(purchasables);
+
+            }
+            else if (rentalDecision.ToLower() == "rent")
+            {
+
+                WriteLine("\nHere's some Items to rent :\n\n");
+
+
+                List<IRentable> rents = new List<IRentable>();
+
+                RentItems(rentables, rents);
+
+
+                Write("\nDo you want to return something ? ( yes / no ) : ");
+                continueAnswer = ReadLine();
+                WriteLine();
+
+                if (continueAnswer.ToLower() == "yes")
                 {
 
-                    int counter = 1;
-                    foreach (var item in purchasables)
-                    {
-                        Write($"{counter})\t");
-                        item.PrintItem();
-                        WriteLine();
-                        counter++;
+                    ReturnRentedItems(rents);
 
-                    }
+                }
+                
+            }
 
-                    Write("Which one do you want ? ( Write the number ) : ");
-                    productChoice = int.Parse(ReadLine());
+            WriteLine("\nThank's for visiting us !");
+
+            ReadLine();
+
+        }
+
+
+
+        static void BuyItems(List<IPurchasable> purchasables)
+        {
+            List<IPurchasable> purchases = new List<IPurchasable>();
+            string continueAnswer;
+
+            do
+            {
+
+                int counter = 1;
+                foreach (var item in purchasables)
+                {
+                    Write($"{counter})\t");
+                    item.PrintItem();
+                    WriteLine();
+                    counter++;
+                }
+
+                Write("Which one do you want ? ( Write the number ) : ");
+                if (int.TryParse(ReadLine(), out int productChoice) && productChoice >= 1 && productChoice <= purchasables.Count)
+                {
 
                     IPurchasable productChoicePurchase = purchasables[productChoice - 1];
 
-                    if(productChoicePurchase.Quantity > 0)
+                    if (productChoicePurchase.Quantity > 0)
                     {
                         productChoicePurchase.Purchase();
                         purchases.Add(productChoicePurchase);
@@ -93,47 +132,47 @@ namespace InheritanceMiniProject
                     {
                         WriteLine("This product is out of stock");
                     }
-                    
 
-                    Write("\nDo you want something else ? ( yes / no ) : "); 
+                    Write("\nDo you want something else ? ( yes / no ) : ");
                     continueAnswer = ReadLine();
-
                     Clear();
-                    
-
-                } while (continueAnswer.ToLower() != "no");
-
-                WriteLine("Products that you bought : \n");
-                foreach(var item in purchases)
-                {
-                    WriteLine(item.ProductName);
                 }
-                
-
-
-            }
-            else if (rentalDecision.ToLower() == "rent")
-            {
-
-                WriteLine("\nHere's some Items to rent :\n\n");
-
-                List<IRentable> rents = new List<IRentable>();
-                do
+                else
                 {
+                    WriteLine("Invalid input, Please enter a valid product number");
+                    continueAnswer = "yes"; 
+                }
 
-                    int counter = 1;
-                    foreach (var item in rentables)
-                    {
-                        Write($"{counter})\t");
-                        item.PrintItem();
-                        WriteLine();
-                        counter++;
 
-                    }
+            } while (continueAnswer.ToLower() != "no");
 
-                    Write("Which one do you want ? ( Write the number ) : ");
-                    productChoice = int.Parse(ReadLine());
+            WriteLine("Products that you bought : \n");
+            foreach (var item in purchases)
+            {
+                WriteLine(item.ProductName);
+            }
+        }
 
+
+        static void RentItems(List<IRentable> rentables, List<IRentable> rents)
+        {
+            
+            string continueAnswer;
+
+            do
+            {
+                int counter = 1;
+                foreach (var item in rentables)
+                {
+                    Write($"{counter})\t");
+                    item.PrintItem();
+                    WriteLine();
+                    counter++;
+                }
+
+                Write("Which one do you want to rent? (Write the number): ");
+                if (int.TryParse(ReadLine(), out int productChoice) && productChoice >= 1 && productChoice <= rentables.Count)
+                {
                     IRentable productChoiceRent = rentables[productChoice - 1];
 
                     if (productChoiceRent.Quantity > 0)
@@ -146,228 +185,78 @@ namespace InheritanceMiniProject
                         WriteLine("This product is out of stock");
                     }
 
-
-                    Write("\nDo you want something else ? ( yes / no ) : ");
+                    Write("\nDo you want something else? (yes / no): ");
                     continueAnswer = ReadLine();
-
                     Clear();
+                }
+                else
+                {
+                    WriteLine("Invalid input. Please enter a valid product number.");
+                    continueAnswer = "yes"; 
+                }
+            } while (continueAnswer.ToLower() != "no");
+
+            WriteLine("Products that you rented: \n");
+            foreach (var item in rents)
+            {
+                WriteLine(item.ProductName);
+            }
+        }
 
 
-                } while (continueAnswer.ToLower() != "no");
 
-                WriteLine("Products that you rented : \n");
+        static void ReturnRentedItems(List<IRentable> rents)
+        {
+            string continueAnswer;
 
+            do
+            {
+                int counter = 1;
                 foreach (var item in rents)
                 {
+                    Write($"{counter})\t");
                     WriteLine(item.ProductName);
+                    WriteLine();
+                    counter++;
                 }
 
-                Write("\nDo you want to return something ? ( yes / no ) : ");
-                continueAnswer = ReadLine();
-                WriteLine();
-
-                if (continueAnswer.ToLower() == "yes")
+                Write("\nWhich product do you want to return? (Write the number): ");
+                if (int.TryParse(ReadLine(), out int productChoice) && productChoice >= 1 && productChoice <= rents.Count )
                 {
-                    string returnContinue;
-                    do
+
+ 
+                    IRentable itemToReturn = rents[productChoice - 1];
+
+                    itemToReturn.ReturnRent();
+                    rents.Remove(itemToReturn);
+
+                    if (rents.Count == 0)
                     {
+                        
+                        WriteLine("\nYou have returned all the items");
+                        continueAnswer = "no";
 
-                        int counter = 1;
-                        foreach (var item in rents)
-                        {
-                            Write($"{counter})\t");
-                            WriteLine(item.ProductName);
-                            WriteLine();
-                            counter++;
-                        }
-
-                        Write("\nWhich product do you want to return ( Write the number ) : ");
-                        productChoice = int.Parse(ReadLine());
-
-                        rents[productChoice - 1].ReturnRent();
-
-                        rents.RemoveAt(productChoice - 1);
-
-                        WriteLine("\nDo you want to Return something else ? ( yes / no ) : ");
-                        returnContinue = ReadLine();
-
+                    }
+                    else
+                    {
+                        
+                        WriteLine("\nDo you want to return something else? (yes / no): ");
+                        continueAnswer = ReadLine();
                         Clear();
 
-                    } while (returnContinue.ToLower() != "no");
-
+                    }
 
                 }
-                
+                else
+                {
+                    WriteLine("Invalid input. Please enter a valid number");
+                    continueAnswer = "yes"; 
+                }
 
-            }
-
-            
-
-            WriteLine("\nThank's for visiting us !");
-
-            ReadLine();
-            
-
-        }
-
-    }
-
-
-
-    public interface IInventoryModel
-    {
-        string ProductName { get; set; }
-        int Quantity { get; set; }
-
-        
-
-    }
-
-
-    public interface IRentable : IInventoryModel
-    {
-
-        void Rent();
-
-        void ReturnRent();
-
-        void PrintItem();
-
-        decimal RentPrice { get; set; }
-        
-
-    }
-
-    public interface IPurchasable : IInventoryModel
-    {
-
-        void Purchase();
-        void PrintItem();
-
-        decimal Price { get; set; }
-
-    }
-
-
-
-    public class InventoryModel : IInventoryModel
-    {
-        public string ProductName { get; set; }
-        public int Quantity { get; set; }
-
-        
-    }
-
-
-    public class MangaModel : InventoryModel, IPurchasable
-    {
-        public int NumberOfPages { get; set; }
-        public decimal Price { get; set; }
-
-        void IPurchasable.PrintItem()
-        {
-            WriteLine($"{ProductName}\t|\tNumber of Pages: {NumberOfPages}\t|\tPrice: {Price}\t|\tQuantity: {Quantity}"); 
-        }
-        public void Purchase()
-        {
-            Quantity -= 1;  
-            WriteLine($"{ProductName} has been Purchased ");
-
+            } while (continueAnswer.ToLower() != "no");
         }
 
 
-    }
-
-    public class FigureModel : InventoryModel, IPurchasable
-    {
-        public string Height { get; set; }
-        public decimal Price { get; set; }
-
-        void IPurchasable.PrintItem()
-        {
-            WriteLine($"{ProductName}\t|\tHeight: {Height}\t\t|\tPrice: {Price}\t|\tQuantity: {Quantity}");
-        }
-
-        public void Purchase()
-        {
-            Quantity -= 1;
-            WriteLine($"{ProductName} has been Purchased ");
-
-        }
-    }
-
-    public class PosterModel : InventoryModel, IPurchasable
-    {
-        public string Size { get; set; }
-        public decimal Price { get; set; }
-        void IPurchasable.PrintItem()
-        {
-            WriteLine($"{ProductName}\t|\tSize: {Size}\t\t|\tPrice: {Price}\t|\tQuantity: {Quantity}");
-        }
-        public void Purchase()
-        {
-            Quantity -= 1;
-            WriteLine($"{ProductName} has been Purchased ");
-
-        }
-    }
-
-    public class CostumeModel : InventoryModel, IPurchasable, IRentable
-    {
-        public string Material { get; set; }
-        public decimal RentPrice { get; set; }
-        public decimal Price { get; set; }
-
-        void IPurchasable.PrintItem()
-        {
-            WriteLine($"{ProductName}\t|\tMaterial: {Material}\t|\tPrice: {Price}\t|\tQuantity: {Quantity}");
-        }
-
-        void IRentable.PrintItem()
-        {
-            WriteLine($"{ProductName}\t\t|\tMaterial: {Material}\t|\tRent price: {RentPrice}\t|\tQuantity: {Quantity}");
-        }
-
-        public void Purchase()
-        {
-            Quantity -= 1;
-            WriteLine($"{ProductName} has been Purchased ");
-
-        }
-
-        public void Rent()
-        {
-            Quantity -= 1;
-            WriteLine($"{ProductName} has been Rented ");
-        }
-
-        public void ReturnRent()
-        {
-            Quantity += 1;
-            WriteLine($"{ProductName} has been Returned ");
-        }
-    }
-
-    public class AnimatorModel : InventoryModel, IRentable
-    {
-        public decimal RentPrice { get; set; }
-
-        void IRentable.PrintItem()
-        {
-            WriteLine($"{ProductName}\t|\tRent price: {RentPrice}\t\t|\tQuantity: {Quantity}\t|");
-        }
-
-        public void Rent()
-        {
-            Quantity -= 1;
-            WriteLine($"{ProductName} has been Rented ");
-        }
-
-        public void ReturnRent()
-        {
-            Quantity += 1;
-            WriteLine($"{ProductName} has been Returned ");
-        }
     }
 
 
